@@ -14,5 +14,9 @@ module Snort
     def active=(a)
       @active = a
     end
+
+    def message
+      opts['msg']
+    end
   end
 end
