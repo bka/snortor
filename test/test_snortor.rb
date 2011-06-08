@@ -24,7 +24,7 @@ class SnortorTest < Test::Unit::TestCase
 
     delete_out_directory
     Snortor.rules[0].active = false
-    Snortor.write_rules(File.join(BASE_DIR,"test","out"))
+    Snortor.export_rules(File.join(BASE_DIR,"test","out"))
 
     Snortor.import_rules(File.join(BASE_DIR,"test","out"))    
     assert_equal 5, Snortor.rules.size

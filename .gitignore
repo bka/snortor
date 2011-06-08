@@ -1,3 +1,6 @@
 pkg/*
 *.gem
 .bundle
+doc
+.yardoc
+doc.sh

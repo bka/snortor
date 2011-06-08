@@ -9,12 +9,21 @@ Gem::Specification.new do |s|
   s.authors     = ["Bernhard Katzmarski"]
   s.email       = ["bkatzm@tzi.de"]
   s.homepage    = "http://www.fidius.me"
-  s.summary     = %q{SUMMARY HERE}
-  s.description = %q{Description here}
+
+  s.summary     = %q{Snortor provides an interface to configure snort rules. You can:
+  *   import rules 
+  *   export rules 
+  *   find rules by message
+  *   activate or deactivate single rules  
+  *   import/export possible via scp
+  }
+
+  s.description = %q{Descriptions are provided in doc and at fidius.me}
 
   s.rubyforge_project = "snortor"
 
   s.add_dependency "snort-rule", ">= 0.0.1"
+  s.add_dependency "net-scp", "~> 1.0.4"  
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

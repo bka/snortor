@@ -15,15 +15,5 @@ module Snortor
       thispath = @filepath.split("/")
       @relative_path = (thispath-workingdir-[filename]).join("/")
     end
-
-    #alias_method :old_push, :<<
-
-    #def <<(a)
-    #  puts "ARRAY << #{a}"
-    #  if self.size > 0
-    #    raise "Not possible" if self[0].class != a.class
-    #  end      
-    #  old_push(a)
-    #end
   end
 end
