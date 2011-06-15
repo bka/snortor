@@ -44,30 +44,60 @@ module Snortor
 
     def import_rules(path)
       rulefile = nil
-      read_rules_from_dir(path) do |filepath,line|
-        if rulefile == nil || rulefile.filepath != filepath
-          #puts "base: #{path} and reading #{filepath}"
-          
-          rulefile = Rulefile.new(filepath)
-          rulefile.calc_relative_path(path)          
-          self << rulefile
-        end
-        begin
-          # only parse lines that seem to be a rule
-          # maybe handle includes and comments as well
-          if line["alert"]
-            if line.strip[0] == "#"
-              line[line.index("#")] = ""
-              rule = Snort::Rule.parse(line)
-              rule.active = false
-              rulefile << rule
-            else
-              rulefile << Snort::Rule.parse(line)
-            end
+      if File.directory?(path)
+        read_rules_from_dir(path) do |filepath,line|
+          if rulefile == nil || rulefile.filepath != filepath
+            #puts "base: #{path} and reading #{filepath}"
+            
+            rulefile = Rulefile.new(filepath)
+            rulefile.calc_relative_path(path)          
+            self << rulefile
           end
-        rescue
-          puts "Problem parsing line #{line} in #{filepath}"
+          begin
+            # only parse lines that seem to be a rule
+            # maybe handle includes and comments as well
+            if line["alert"]
+              if line.strip[0] == "#"
+                line[line.index("#")] = ""
+                rule = Snort::Rule.parse_rule(line.strip)
+                rule.active = false
+                rulefile << rule if rule
+              else
+                rulefile << Snort::Rule.parse_rule(line.strip)
+              end
+            end
+          rescue
+            puts "Problem parsing line #{line} in #{filepath}"
+          end
         end
+      else
+
+        read_rules_from_file(path) do |filepath,line|
+          if rulefile == nil || rulefile.filepath != filepath
+            #puts "base: #{path} and reading #{filepath}"
+            
+            rulefile = Rulefile.new(filepath)
+            rulefile.calc_relative_path(path)          
+            self << rulefile
+          end
+          begin
+            # only parse lines that seem to be a rule
+            # maybe handle includes and comments as well
+            if line["alert"]
+              if line.strip[0] == "#"
+                line[line.index("#")] = ""
+                rule = Snort::Rule.parse_rule(line.strip)
+                rule.active = false
+                rulefile << rule if rule
+              else
+                rulefile << Snort::Rule.parse_rule(line.strip)
+              end
+            end
+          rescue
+            puts "Problem parsing line #{line} in #{filepath}"
+          end
+        end
+
       end
     end
 
@@ -83,9 +113,9 @@ module Snortor
         end
         rulefile.each do |rf|
           if rf.active
-            file.write(rf.to_s.gsub("\n","")+"\n")
+            file.write(rf.to_line.gsub("\n","")+"\n")
           else
-            file.write("#"+rf.to_s.gsub("\n","")+"\n")
+            file.write("# "+rf.to_line.gsub("\n","")+"\n")
           end
         end
         file.close

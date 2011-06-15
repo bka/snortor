@@ -52,10 +52,16 @@ module Snortor
     def export_rules(args)
       if args.class == Hash
         local_path = args[:local_path]
+        puts "export_rules #{Dir.tmpdir}"
         local_path = File.join(Dir.tmpdir,"rules") unless local_path
+
+        puts "localpath: #{local_path}"
         Dir.mkdir(local_path) if !File.exists?(local_path)
+        puts "localpath: #{local_path}"
         @@rules.write_rules(local_path)
         args[:local_path] = local_path
+
+        puts "args: #{args[:local_path]}"
         upload_to_host(args)
       elsif args.class == String
         @@rules.write_rules(args)
@@ -68,9 +74,9 @@ module Snortor
       if conn[:local_path]
         local_path = conn[:local_path]
       else
-        local_path = File.join(Dir.tmpdir,"rules")
+        local_path = File.join(Dir.tmpdir)
       end
-      Dir.mkdir(local_path) if !File.exists?(local_path)
+      Dir.mkdir(local_path) unless File.exists?(local_path)
       raise "no host given for scp download" unless conn[:host]
       raise "no user given for scp download" unless conn[:user]
       raise "no password given for scp download" unless conn[:password]
@@ -80,11 +86,13 @@ module Snortor
       options[:password] = conn[:password]
       options = options.merge(conn[:options])
 
+      puts "dowload rules from remote:#{conn[:remote_path]} to #{local_path}"
       Net::SSH.start(conn[:host], conn[:user], options) do |ssh|
         ssh.scp.download! conn[:remote_path], local_path,:recursive=>true
         #ssh.scp.upload! "/home/bernd/fidius/snortor/rules/rules/x11.rules", "/root/x11.rules"
       end
-      return local_path
+      puts "rules are in "+local_path+"/rules"
+      return local_path+"/rules"
     end
 
     def upload_to_host(conn={})
@@ -96,8 +104,10 @@ module Snortor
 
       options = {}
       options[:password] = conn[:password]
-      options = options.merge(conn[:options])
+      options = options.merge(conn[:options]) if conn[:options]
 
+
+      puts "upload from #{conn[:local_path]} to #{conn[:remote_path]}"
       Net::SSH.start(conn[:host], conn[:user], options) do |ssh|
         ssh.scp.upload! conn[:local_path], conn[:remote_path],:recursive=>true
       end
