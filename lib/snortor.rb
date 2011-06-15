@@ -84,6 +84,7 @@ module Snortor
 
       options = {}
       options[:password] = conn[:password]
+      options[:auth_methods] = ["password"]
       options = options.merge(conn[:options])
 
       puts "dowload rules from remote:#{conn[:remote_path]} to #{local_path}"
@@ -104,6 +105,7 @@ module Snortor
 
       options = {}
       options[:password] = conn[:password]
+      options[:auth_methods] = ["password"]
       options = options.merge(conn[:options]) if conn[:options]
 
 
