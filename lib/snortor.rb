@@ -10,10 +10,10 @@ require File.join(BASE,'rulefile_collection')
 require 'tmpdir'
 
 #Snortor provides an interface to configure snort rules. You can:
-#  *   import rules 
-#  *   export rules 
+#  *   import rules
+#  *   export rules
 #  *   find rules by message
-#  *   activate or deactivate single rules  
+#  *   activate or deactivate single rules
 #  *   import/export possible via scp
 module Snortor
   class << self
@@ -52,16 +52,10 @@ module Snortor
     def export_rules(args)
       if args.class == Hash
         local_path = args[:local_path]
-        puts "export_rules #{Dir.tmpdir}"
         local_path = File.join(Dir.tmpdir,"rules") unless local_path
-
-        puts "localpath: #{local_path}"
         Dir.mkdir(local_path) if !File.exists?(local_path)
-        puts "localpath: #{local_path}"
         @@rules.write_rules(local_path)
         args[:local_path] = local_path
-
-        puts "args: #{args[:local_path]}"
         upload_to_host(args)
       elsif args.class == String
         @@rules.write_rules(args)
@@ -87,12 +81,15 @@ module Snortor
       options[:auth_methods] = ["password"]
       options = options.merge(conn[:options])
 
-      puts "dowload rules from remote:#{conn[:remote_path]} to #{local_path}"
       Net::SSH.start(conn[:host], conn[:user], options) do |ssh|
-        ssh.scp.download! conn[:remote_path], local_path,:recursive=>true
+        ssh.scp.download!(conn[:remote_path], local_path,:recursive=>true) do |ch, name, sent, total|
+          begin
+            print "\r#{name}: #{(sent.to_f * 100 / total.to_f).to_i}%\e[0K"
+          rescue
+          end
+        end
         #ssh.scp.upload! "/home/bernd/fidius/snortor/rules/rules/x11.rules", "/root/x11.rules"
       end
-      puts "rules are in "+local_path+"/rules"
       return local_path+"/rules"
     end
 
@@ -108,19 +105,22 @@ module Snortor
       options[:auth_methods] = ["password"]
       options = options.merge(conn[:options]) if conn[:options]
 
-
-      puts "upload from #{conn[:local_path]} to #{conn[:remote_path]}"
       Net::SSH.start(conn[:host], conn[:user], options) do |ssh|
-        ssh.scp.upload! conn[:local_path], conn[:remote_path],:recursive=>true
+        ssh.scp.upload!(conn[:local_path], conn[:remote_path],:recursive=>true) do |ch, name, sent, total|
+          begin
+            print "\r#{name}: #{(sent.to_f * 100 / total.to_f).to_i}%\e[0K"
+          rescue
+          end
+        end
       end
-    end    
+    end
 
     # clears the rule array
-    # 
+    #
     def clear
       @@rules.clear
     end
-    
+
     # find a rule by its message
     #   rule = Snortor.rules.find_by_msg("BAD-TRAFFIC")
     def find_by_msg(msg)
@@ -128,7 +128,7 @@ module Snortor
     end
 
     # find all rules by its message
-    #   rules = Snortor.rules.find_all_by_msg("BAD-TRAFFIC")    
+    #   rules = Snortor.rules.find_all_by_msg("BAD-TRAFFIC")
     def find_all_by_msg(msg)
       @@rules.find_all_by_msg(msg)
     end
