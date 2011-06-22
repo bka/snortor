@@ -1,5 +1,5 @@
-require File.join(BASE,'rule_loader')
-require File.join(BASE,'rule_finder')
+require File.join(SNORTOR_BASE,'rule_loader')
+require File.join(SNORTOR_BASE,'rule_finder')
 
 module Snortor
   class RulefileCollection < Array
@@ -10,7 +10,7 @@ module Snortor
     alias_method :old_each, :each
 
     def <<(a)
-      raise "only instances of Rulefile allowed" unless a.class == Rulefile       
+      raise "only instances of Rulefile allowed" unless a.class == Rulefile
       old_push(a)
     end
 
@@ -48,9 +48,9 @@ module Snortor
         read_rules_from_dir(path) do |filepath,line|
           if rulefile == nil || rulefile.filepath != filepath
             #puts "base: #{path} and reading #{filepath}"
-            
+
             rulefile = Rulefile.new(filepath)
-            rulefile.calc_relative_path(path)          
+            rulefile.calc_relative_path(path)
             self << rulefile
           end
           begin
@@ -75,9 +75,9 @@ module Snortor
         read_rules_from_file(path) do |filepath,line|
           if rulefile == nil || rulefile.filepath != filepath
             #puts "base: #{path} and reading #{filepath}"
-            
+
             rulefile = Rulefile.new(filepath)
-            rulefile.calc_relative_path(path)          
+            rulefile.calc_relative_path(path)
             self << rulefile
           end
           begin

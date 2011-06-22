@@ -1,12 +1,12 @@
 require 'rubygems'
-BASE = File.expand_path('..', __FILE__)
+SNORTOR_BASE = File.expand_path('..', __FILE__)
 
 require 'snort-rule'
 require 'net/ssh'
 require 'net/scp'
-require File.join(BASE,'rule')
-require File.join(BASE,'rulefile')
-require File.join(BASE,'rulefile_collection')
+require File.join(SNORTOR_BASE,'rule')
+require File.join(SNORTOR_BASE,'rulefile')
+require File.join(SNORTOR_BASE,'rulefile_collection')
 require 'tmpdir'
 
 #Snortor provides an interface to configure snort rules. You can:
