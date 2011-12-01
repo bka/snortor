@@ -47,8 +47,6 @@ module Snortor
       if File.directory?(path)
         read_rules_from_dir(path) do |filepath,line|
           if rulefile == nil || rulefile.filepath != filepath
-            #puts "base: #{path} and reading #{filepath}"
-
             rulefile = Rulefile.new(filepath)
             rulefile.calc_relative_path(path)
             self << rulefile
@@ -74,8 +72,6 @@ module Snortor
 
         read_rules_from_file(path) do |filepath,line|
           if rulefile == nil || rulefile.filepath != filepath
-            #puts "base: #{path} and reading #{filepath}"
-
             rulefile = Rulefile.new(filepath)
             rulefile.calc_relative_path(path)
             self << rulefile
@@ -97,7 +93,6 @@ module Snortor
             puts "Problem parsing line #{line} in #{filepath}"
           end
         end
-
       end
     end
 

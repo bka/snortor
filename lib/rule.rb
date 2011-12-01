@@ -10,7 +10,7 @@ module Snort
     def initialize(kwargs={})
       super(kwargs)
       @active=true
-    end    
+    end
 
     def active=(a)
       @active = a
@@ -19,15 +19,7 @@ module Snort
     def message
       opts['msg']
     end
-
-    #alias :old_parse :parse
-
-
-    #def self.parse(line)
-    #  super(line)
-    #end
     def self.parse_rule(line)
-      #puts "@line = #{line}"
       rule = self.parse(line)
       if rule.message
         rule.line = line
@@ -37,13 +29,8 @@ module Snort
       end
     end
 
-    #def to_s
-    #  return @line.to_s
-    #end
-
     def to_line
       @line.to_s
     end
-    
   end
 end

@@ -53,7 +53,7 @@ module Snortor
       if args.class == Hash
         local_path = args[:local_path]
         local_path = File.join(Dir.tmpdir,"rules") unless local_path
-        Dir.mkdir(local_path) if !File.exists?(local_path)
+        Dir.mkdir(local_path) unless File.exists?(local_path)
         @@rules.write_rules(local_path)
         args[:local_path] = local_path
         upload_to_host(args)
@@ -88,7 +88,6 @@ module Snortor
           rescue
           end
         end
-        #ssh.scp.upload! "/home/bernd/fidius/snortor/rules/rules/x11.rules", "/root/x11.rules"
       end
       return local_path+"/rules"
     end
