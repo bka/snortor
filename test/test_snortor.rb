@@ -26,7 +26,7 @@ class SnortorTest < Test::Unit::TestCase
     Snortor.rules[0].active = false
     Snortor.export_rules(File.join(BASE_DIR,"test","out"))
 
-    Snortor.import_rules(File.join(BASE_DIR,"test","out"))    
+    Snortor.import_rules(File.join(BASE_DIR,"test","out"))
     assert_equal 6, Snortor.rules.size
     assert !Snortor.rules[0].active
     assert Snortor.rules[1].active
@@ -80,14 +80,10 @@ class SnortorTest < Test::Unit::TestCase
 
   def test_set_deactivated_rule_active
     Snortor.import_rules(FIXTURES_DIR)
-    puts "set_rules_active"
     assert_equal 6, Snortor.rules.size
     Snortor.rules.each do |rule|
-      puts rule.inspect
       rule.active = true
     end
     Snortor.export_rules(File.join(BASE_DIR,"test","out"))
   end
-
-
 end
